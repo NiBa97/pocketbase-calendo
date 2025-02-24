@@ -19,6 +19,11 @@ func main() {
 
         return se.Next()
 	})
+	app.OnRecordCreateRequest("note", "task").BindFunc(func(e *core.RecordRequestEvent) error {
+		note := e.Record
+		note.Set("user", e.Auth.Id)
+		return e.Next()
+	})
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
