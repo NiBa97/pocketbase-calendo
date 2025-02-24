@@ -25,6 +25,55 @@ func main() {
 		return e.Next()
 	})
 
+	app.OnRecordAfterCreateSuccess("task").BindFunc(func(e *core.RecordEvent) error {
+		task := e.Record
+
+		collection, err := app.FindCollectionByNameOrId("taskHistory")
+		if err != nil {
+			return err
+		}
+
+		record := core.NewRecord(collection)
+		record.Set("task", task.Id)
+		record.Set("startDate", task.Get("startDate"))
+		record.Set("endDate", task.Get("endDate"))
+		record.Set("isAllDay", task.Get("isAllDay"))
+		record.Set("status", task.Get("status"))
+		record.Set("name", task.Get("name"))
+		record.Set("description", task.Get("description"))
+		record.Set("user", task.Get("user"))
+
+		if err := app.Save(record); err != nil {
+			return err
+		}
+
+		return e.Next()
+	})
+	app.OnRecordAfterUpdateSuccess("task").BindFunc(func(e *core.RecordEvent) error {
+		task := e.Record
+
+		collection, err := app.FindCollectionByNameOrId("taskHistory")
+		if err != nil {
+			return err
+		}
+
+		record := core.NewRecord(collection)
+		record.Set("task", task.Id)
+		record.Set("startDate", task.Get("startDate"))
+		record.Set("endDate", task.Get("endDate"))
+		record.Set("isAllDay", task.Get("isAllDay"))
+		record.Set("status", task.Get("status"))
+		record.Set("name", task.Get("name"))
+		record.Set("description", task.Get("description"))
+		record.Set("user", task.Get("user"))
+
+		if err := app.Save(record); err != nil {
+			return err
+		}
+
+		return e.Next()
+	})
+
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
